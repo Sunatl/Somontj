@@ -2,26 +2,28 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Category, Product, Inquiry
-from .serializers import CategorySerializer, ProductSerializer, InquirySerializer
+from .serializers import *
 
-@api_view(['GET'])
+@api_view(['GET','POST'])
 def category_list(request):
     if request.method == 'GET':
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
-        return Response(serializer.data)
-
-
+        return Response(serializer.data  )
     
-@api_view(['POST'])
-def category_create(request):
     if request.method == 'POST':
         serializer = CategorySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if serializer.is_valid():  
+            serializer.save()  
+            return Response(serializer.data, status=status.HTTP_201_CREATED)   
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    
+
+
+
+
+
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def category_detail(request, pk):
@@ -45,6 +47,9 @@ def category_detail(request, pk):
         category.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+
+
 @api_view(['GET', 'POST'])
 def product_list(request):
     if request.method == 'GET':
@@ -59,12 +64,13 @@ def product_list(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def product_detail(request, pk):
     try:
         product = Product.objects.get(pk=pk)
     except Product.DoesNotExist:
-        return Response( status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
         serializer = ProductSerializer(product)
@@ -80,6 +86,7 @@ def product_detail(request, pk):
     if request.method == 'DELETE':
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 @api_view(['GET', 'POST'])
 def inquiry_list(request):
